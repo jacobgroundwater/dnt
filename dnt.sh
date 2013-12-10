@@ -46,6 +46,7 @@ fi
 
 START_TS=`date +%s`
 
+# mark a global failure if any of the tests run fail
 test_node() {
   local OUT=/tmp/${OUTPUT_PREFIX}dnt-${NV}.out
   local NV=$1
@@ -62,10 +63,11 @@ test_node() {
     ${COPY_CMD}; \
     ${TEST_CMD} \
   " &> $OUT
+  EXIT_CODE=$?
 
   # Print status
   printf "Node@\033[1m\033[33m%-8s\033[39m\033[22m: " $NV
-  if [[ `cat /tmp/${OUTPUT_PREFIX}dnt-${NV}.out | $LOG_OK_CMD` == "ok" ]]; then
+  if [[ $EXIT_CODE -eq 0 ]]; then
     echo -ne "\033[1m\033[32mPASS\033[39m\033[22m"
   else
     echo -ne "\033[1m\033[31mFAIL\033[39m\033[22m"
